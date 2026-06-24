@@ -1,0 +1,11 @@
+category,prompt,success,errors_before_repair,errors_after_repair,repair_attempts,latency_seconds,failure_type,assumptions_made
+real,"Build a CRM with login, contacts, dashboard, role-based acce...",True,0,0,0,2.36,,Admins can see analytics was assumed to be a feature of the premium plan
+real,"Create a task management app with projects, tasks, deadlines...",True,2,0,1,9.86,,
+real,"Build an online bookstore with book listings, shopping cart,...",True,0,0,0,41.94,,
+real,"Make a fitness tracking app with workouts, progress charts, ...",True,0,0,0,36.69,,
+real,"Build a hotel booking platform with room listings, reservati...",True,0,0,0,40.78,,
+edge_case,Make an app.,True,3,0,2,44.97,,Assuming a free app creation experience
+edge_case,Build a chat app where messages are private but also fully p...,True,0,0,0,23.68,,assuming a single admin role for moderation purposes
+edge_case,I need something for my business.,True,0,0,0,25.91,,Assumed a single User role as no roles were mentioned
+edge_case,"Build a social network with posts, likes, comments, follow s...",False,,,0,95.37,"exception: ValueError: Schema generation failed: missing keys after repair attempt: ['db_schema', 'auth_schema']",
+edge_case,Build an app with users and stuff.,True,0,0,0,36.24,,Single role assumed as 'User' due to lack of mention of multiple roles
