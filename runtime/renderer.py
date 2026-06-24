@@ -66,6 +66,17 @@ def render_app(schemas: dict, mock_data: dict) -> str:
                     <polyline points="{points}" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="3" vector-effect="non-scaling-stroke" />
                   </svg>
                 </div>"""
+            elif comp.type == "card":
+                # Card components with no entity (e.g. dashboard summary cards) get
+                # placeholder stat content instead of an empty box.
+                stat_value = "1,284" if "dashboard" in page.name.lower() else "$4,920"
+                stat_label = "Active this month" if "dashboard" in page.name.lower() else "Total this month"
+                sections += f"""
+                <div class="dcard stat-dcard" style="background:{color}">
+                  <div class="dcard-label">{page.name} Summary</div>
+                  <div class="stat-value">{stat_value}</div>
+                  <div class="stat-sub">{stat_label}</div>
+                </div>"""
 
             else:
                 sections += f'<div class="dcard" style="background:{color}"><div class="dcard-label">{comp.type}</div></div>'
@@ -162,7 +173,9 @@ def render_app(schemas: dict, mock_data: dict) -> str:
   }}
   .dbutton:hover {{ opacity: 0.82; }}
   .chart-dcard {{ justify-content: flex-end; }}
-  .trend-svg {{ width: 100%; height: 92px; }}
+  .stat-dcard {{ justify-content: center; }}
+  .stat-value {{ font-family:'Manrope', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -0.5px; }}
+  .stat-sub {{ font-size: 13px; opacity: 0.7; font-weight: 600; }}
 </style>
 </head>
 <body>

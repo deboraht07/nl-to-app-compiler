@@ -37,6 +37,7 @@ def validate_cross_layer(schemas: dict) -> List[ValidationError]:
                 "ui", f"page '{page.name}' has no components — nothing would render",
                 f"ui_schema.pages[{p_idx}]"
             ))
+
         for c_idx, comp in enumerate(page.components):
             path = f"ui_schema.pages[{p_idx}].components[{c_idx}]"
 
@@ -63,10 +64,19 @@ def validate_cross_layer(schemas: dict) -> List[ValidationError]:
     # --- API checks ---
     for e_idx, endpoint in enumerate(api.endpoints):
         path = f"api_schema.endpoints[{e_idx}]"
+
+        if endpoint.method in ("PUT", "DELETE") and ":id" not in endpoint.path and "{id}" not in endpoint.path:
+            errors.append(ValidationError(
+                "api",
+                f"{endpoint.method} endpoint '{endpoint.path}' is missing a resource identifier in its path",
+                f"api_schema.endpoints[{e_idx}]"
+            ))
+
         if endpoint.entity not in db_tables:
             errors.append(ValidationError(
                 "api", f"endpoint '{endpoint.path}' references unknown entity '{endpoint.entity}'", path
             ))
+
         for role in endpoint.allowed_roles:
             if role not in valid_roles:
                 errors.append(ValidationError(

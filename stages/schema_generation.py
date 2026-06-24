@@ -43,6 +43,8 @@ CRITICAL CONSISTENCY RULES (this will be checked):
 - db_schema tables MUST exactly match the entities and fields given in the input design (use the same field names and types).
 - Every role in allowed_roles (ui_schema, api_schema) MUST exist in auth_schema roles.
 - Generate at least one GET, POST, PUT, DELETE endpoint per entity (except read-only entities like Analytics).
+- PUT and DELETE endpoints MUST include an identifier in the path, e.g. "/api/students/:id", never just "/api/students".
+- Never generate a page/form with entity: null AND an empty fields list. If a page genuinely needs no entity (e.g. a delete confirmation), give it at least one field (e.g. the id field) or omit the page.
 - Every page must have at least one component. Never leave "components" as an empty list.
 
 Return ONLY the JSON object, nothing else.
