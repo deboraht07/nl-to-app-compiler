@@ -8,12 +8,18 @@ MAX_REPAIR_ATTEMPTS = 3
 
 
 def group_errors_by_layer(errors: List[ValidationError]) -> dict:
-    """Splits errors by which layer they belong to, so we only repair what's broken."""
+    """
+    Splits errors by which layer they belong to, so we only repair what's broken.
+    Errors about an unknown entity are routed to BOTH the layer that referenced it
+    AND the db layer, since the real fix is usually adding the missing table to
+    db_schema, not changing the layer that correctly referenced it.
+    """
     grouped = {"ui": [], "api": [], "db": [], "auth": []}
     for e in errors:
         grouped[e.layer].append(e)
+        if "unknown entity" in e.message:
+            grouped["db"].append(e)
     return grouped
-
 
 def repair_layer(layer: str, current_value: dict, errors: List[ValidationError], full_schemas: dict) -> dict:
     """
@@ -22,10 +28,20 @@ def repair_layer(layer: str, current_value: dict, errors: List[ValidationError],
     """
     error_descriptions = "\n".join(f"- {e.message}" for e in errors)
 
+    extra_instruction = ""
+    if layer == "db":
+        extra_instruction = (
+            "\nSome of these errors are 'unknown entity' errors from the UI or API layers "
+            "referencing a table that does not exist in db_schema yet. For each such missing "
+            "entity, ADD a new table for it to this db_schema, with a reasonable 'id' field "
+            "(string, required) plus 2-4 other plausible fields. Do not remove existing tables.\n"
+        )
+
     system_prompt = f"""You are a JSON repair engine. You will be given a broken JSON object
 for the "{layer}" layer of an app schema, along with the specific validation errors found in it.
 
-Fix ONLY the listed errors. Do not change anything else. Do not remove valid fields.
+Fix ONLY the listed errors. Do not remove valid fields or tables that are not mentioned in the
+errors.{extra_instruction}
 Return ONLY the corrected JSON object for this layer, in the exact same shape as the input.
 """
 
