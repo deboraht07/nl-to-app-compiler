@@ -262,6 +262,15 @@ and escalate to a larger model automatically only for requests that fail repair 
 
 \- Expanded evaluation set with a wider range of real-world product prompts
 
+\- Detection of duplicate routes, table names, and field names within a single schema
+
+
+\- Fuzzy-mapping unknown entity references to the closest existing entity instead of failing outright
+
+\- A dedicated `detail`/`view` component type, distinct from `form`, for read-only pages (e.g. "View Student Details" currently renders as an editable form)
+
+\- Auto-generation of a login/auth endpoint to match any generated Login page
+
 
 
 \## Running locally
